@@ -14,16 +14,11 @@ spec:
     spec:
       containers:
         - name: lab5
-          image: ghcr.io/p3nc/lab-rock-app
+          image: ghcr.io/p3nc/lab-rock-app:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
-            - name: SPRING_DATASOURCE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: db-secrets
-                  key: SPRING_DATASOURCE_URL
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -34,6 +29,11 @@ spec:
                 secretKeyRef:
                   name: db-secrets
                   key: SPRING_DATASOURCE_PASSWORD
+            - name: CLOUD_SQL_CONNECTION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: CLOUD_SQL_CONNECTION_NAME
         - name: cloud-sql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
           args:
@@ -43,13 +43,13 @@ spec:
             - "$(CLOUD_SQL_CONNECTION_NAME)"
           ports:
             - containerPort: 3306
+          securityContext:
+            runAsNonRoot: true
           env:
             - name: CLOUD_SQL_CONNECTION_NAME
               valueFrom:
                 secretKeyRef:
                   name: db-secrets
                   key: CLOUD_SQL_CONNECTION_NAME
-          securityContext:
-            runAsNonRoot: true
       imagePullSecrets:
         - name: ghcr-registry
