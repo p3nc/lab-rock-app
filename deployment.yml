@@ -14,13 +14,16 @@ spec:
     spec:
       containers:
         - name: lab5
-          image: ghcr.io/p3nc/lab-rock-app
+          image: ghcr.io/p3nc/lab-rock-app:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://127.0.0.1:3306/rock_db?useSSL=false
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: SPRING_DATASOURCE_URL
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -38,6 +41,8 @@ spec:
             - "--structured-logs"
             - "--port=3306"
             - "$(CLOUD_SQL_CONNECTION_NAME)"
+          securityContext:
+            runAsNonRoot: true
           env:
             - name: CLOUD_SQL_CONNECTION_NAME
               valueFrom:
@@ -46,6 +51,5 @@ spec:
                   key: CLOUD_SQL_CONNECTION_NAME
           ports:
             - containerPort: 3306
-          # видаляємо runAsNonRoot, щоб проксі стартував
       imagePullSecrets:
         - name: ghcr-registry
