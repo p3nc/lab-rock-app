@@ -101,6 +101,7 @@ jobs:
       - name: Apply K8S configurations
         run: |
           kubectl apply -f deployment.yml
+          kubectl apply -f service.yml
           kubectl set env deployment/rock-app-deployment DB_HOST=${{ secrets.DB_HOST }}
           kubectl set env deployment/rock-app-deployment DB_USER=${{ secrets.DB_USER }}
           kubectl set env deployment/rock-app-deployment DB_PASS=${{ secrets.DB_PASS }}
