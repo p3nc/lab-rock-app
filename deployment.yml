@@ -18,12 +18,5 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
-          env:
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://$(DB_HOST):3306/rock_db?useSSL=false"
-            - name: SPRING_DATASOURCE_USERNAME
-              value: "$(DB_USER)"
-            - name: SPRING_DATASOURCE_PASSWORD
-              value: "$(DB_PASS)"
       imagePullSecrets:
         - name: ghcr-registry
