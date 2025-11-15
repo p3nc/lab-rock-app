@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: rock-app-service
 spec:
-  selector:
-    app: rock-app
   type: LoadBalancer
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 8080
+  selector:
+    app: rock-app
