@@ -21,11 +21,13 @@ spec:
           envFrom:
             - secretRef:
                 name: db-secrets
+
         - name: cloud-sql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
           args:
             - "--auto-iam-authn"
             - "--structured-logs"
+            - "--port=3306"
             - "$(CLOUD_SQL_CONNECTION_NAME)"
           securityContext:
             runAsNonRoot: true
@@ -35,5 +37,8 @@ spec:
                 secretKeyRef:
                   name: db-secrets
                   key: CLOUD_SQL_CONNECTION_NAME
+          ports:
+            - containerPort: 3306
+
       imagePullSecrets:
         - name: ghcr-registry
