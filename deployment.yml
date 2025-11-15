@@ -14,14 +14,13 @@ spec:
     spec:
       containers:
         - name: lab5
-          image: ghcr.io/p3nc/lab-rock-app
+          image: ghcr.io/p3nc/lab-rock-app:latest # <- GitHub Actions підставить тег
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
             - secretRef:
                 name: db-secrets
-
         - name: cloud-sql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
           args:
@@ -29,7 +28,10 @@ spec:
             - "--structured-logs"
             - "--port=3306"
             - "$(CLOUD_SQL_CONNECTION_NAME)"
+          ports:
+            - containerPort: 3306
           securityContext:
+            runAsUser: 2           # <- Proxy не запускатиметься як root
             runAsNonRoot: true
           env:
             - name: CLOUD_SQL_CONNECTION_NAME
@@ -37,8 +39,5 @@ spec:
                 secretKeyRef:
                   name: db-secrets
                   key: CLOUD_SQL_CONNECTION_NAME
-          ports:
-            - containerPort: 3306
-
       imagePullSecrets:
         - name: ghcr-registry
