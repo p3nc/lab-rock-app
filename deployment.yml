@@ -1,0 +1,26 @@
+apiVersion: stable.com.extensions/v1
+kind: Deployment
+metadata:
+  name: rock-app-deployment
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: rock-app
+    spec:
+      containers:
+        - name: lab5
+          image: ghcr.io/YOUR_REPOSITORY_PATH # Цей рядок буде оновлено автоматично
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://$(DB_HOST):3306/rock_db?useSSL=false"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "$(DB_USER)"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "$(DB_PASS)"
+      imagePullSecrets:
+        - name: ghcr-registry

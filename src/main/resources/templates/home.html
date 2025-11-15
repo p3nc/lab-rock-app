@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Рок 60-70х</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; margin: 2em; }
+        .item { background: #fff; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        h2 { color: #d10000; }
+        form div { margin-bottom: 10px; }
+        form label { display: inline-block; width: 120px; }
+    </style>
+</head>
+<body>
+<h1>🎸 Легенди Року 60-70х</h1>
+
+<h2>Додати новий гурт</h2>
+<form action="/add-band" method="POST" style="margin-bottom: 2em;">
+    <div>
+        <label>Назва гурту:</label>
+        <input type="text" name="name" required>
+    </div>
+    <div>
+        <label>Країна:</label>
+        <input type="text" name="originCountry" required>
+    </div>
+    <div>
+        <label>Рік заснування:</label>
+        <input type="number" name="yearFormed" required>
+    </div>
+    <button type="submit">Додати гурт</button>
+</form>
+<hr>
+
+<h2>Додати новий альбом</h2>
+<form action="/add-album" method="POST" style="margin-bottom: 2em;">
+    <div>
+        <label>Назва альбому:</label>
+        <input type="text" name="title" required>
+    </div>
+    <div>
+        <label>Рік випуску:</label>
+        <input type="number" name="releaseYear" required>
+    </div>
+    <div>
+        <label>Гурт:</label>
+        <select name="band_id" required>
+            <option value="">-- Оберіть гурт --</option>
+            <option th:each="band : ${bands}"
+                    th:value="${band.id}"
+                    th:text="${band.name}">
+            </option>
+        </select>
+    </div>
+    <div>
+        <label>Лейбл:</label>
+        <input type="text" name="recordLabel">
+    </div>
+    <div>
+        <label>Продюсер:</label>
+        <input type="text" name="producer">
+    </div>
+    <button type="submit">Додати альбом</button>
+</form>
+<hr>
+
+<h2>Додати нову пісню</h2>
+<form action="/add-song" method="POST" style="margin-bottom: 2em;">
+    <div>
+        <label>Назва пісні:</label>
+        <input type="text" name="title" required>
+    </div>
+    <div>
+        <label>Тривалість:</label>
+        <input type="text" name="duration" placeholder="Напр. 4:20">
+    </div>
+    <div>
+        <label>Альбом:</label>
+        <select name="album_id" required>
+            <option value="">-- Оберіть альбом --</option>
+            <option th:each="album : ${albums}"
+                    th:value="${album.id}"
+                    th:text="${album.title} + ' (' + ${album.band.name} + ')'">
+            </option>
+        </select>
+    </div>
+    <button type="submit">Додати пісню</button>
+</form>
+<hr>
+
+<h2>Гурт</h2>
+<div th:each="band : ${bands}" class="item">
+    <h3 th:text="${band.name}">Назва гурту</h3>
+    <p th:text="'Країна: ' + ${band.originCountry} + ', заснований: ' + ${band.yearFormed}"></p>
+</div>
+
+<hr>
+<h2>💿 Альбоми</h2>
+<div th:each="album : ${albums}" class="item">
+    <h3 th:text="${album.title}">Назва альбому</h3>
+    <p th:text="'Рік випуску: ' + ${album.releaseYear}"></p>
+
+    <p th:if="${album.band != null}">
+        <b>Виконавець:</b> <span th:text="${album.band.name}"></span>
+    </p>
+    <p th:if="${album.albumDetails != null && album.albumDetails.recordLabel != null}">
+        <b>Лейбл:</b> <span th:text="${album.albumDetails.recordLabel}"></span>
+    </p>
+    <p th:if="${album.albumDetails != null && album.albumDetails.producer != null}">
+        <b>Продюсер:</b> <span th:text="${album.albumDetails.producer}"></span>
+    </p>
+</div>
+
+<hr>
+<h2>🎵 Пісні</h2>
+<div th:each="song : ${songs}" class="item">
+    <h3 th:text="${song.title}">Назва пісні</h3>
+    <p th:text="'Тривалість: ' + ${song.duration}"></p>
+    <p th:if="${song.album != null}">
+        <b>Альбом:</b> <span th:text="${song.album.title}"></span>
+    </p>
+</div>
+
+</body>
+</html>
