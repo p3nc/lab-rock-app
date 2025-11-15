@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: lab5
-          image: ghcr.io/p3nc/lab-rock-app:latest
+          image: ghcr.io/p3nc/lab-rock-app
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -41,15 +41,15 @@ spec:
             - "--structured-logs"
             - "--port=3306"
             - "$(CLOUD_SQL_CONNECTION_NAME)"
-          securityContext:
-            runAsNonRoot: true
+          ports:
+            - containerPort: 3306
           env:
             - name: CLOUD_SQL_CONNECTION_NAME
               valueFrom:
                 secretKeyRef:
                   name: db-secrets
                   key: CLOUD_SQL_CONNECTION_NAME
-          ports:
-            - containerPort: 3306
+          securityContext:
+            runAsNonRoot: true
       imagePullSecrets:
         - name: ghcr-registry
