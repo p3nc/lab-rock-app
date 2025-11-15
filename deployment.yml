@@ -14,13 +14,23 @@ spec:
     spec:
       containers:
         - name: lab5
-          image: ghcr.io/p3nc/lab-rock-app:latest # <- GitHub Actions підставить тег
+          image: ghcr.io/p3nc/lab-rock-app
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
-          envFrom:
-            - secretRef:
-                name: db-secrets
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://127.0.0.1:3306/rock_db?useSSL=false
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: SPRING_DATASOURCE_PASSWORD
         - name: cloud-sql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
           args:
@@ -28,16 +38,14 @@ spec:
             - "--structured-logs"
             - "--port=3306"
             - "$(CLOUD_SQL_CONNECTION_NAME)"
-          ports:
-            - containerPort: 3306
-          securityContext:
-            runAsUser: 2           # <- Proxy не запускатиметься як root
-            runAsNonRoot: true
           env:
             - name: CLOUD_SQL_CONNECTION_NAME
               valueFrom:
                 secretKeyRef:
                   name: db-secrets
                   key: CLOUD_SQL_CONNECTION_NAME
+          ports:
+            - containerPort: 3306
+          # видаляємо runAsNonRoot, щоб проксі стартував
       imagePullSecrets:
         - name: ghcr-registry
