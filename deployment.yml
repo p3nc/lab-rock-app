@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: lab5
-          image: ghcr.io/YOUR_REPOSITORY_PATH # Цей рядок буде оновлено автоматично
+          image: ghcr.io/p3nc/lab-rock-app
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

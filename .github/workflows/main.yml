@@ -96,7 +96,7 @@ jobs:
             --docker-username=${{ secrets.GH_USER }}
       - name: Update deployment.yml with new image tag
         run: |
-          sed -i 's|image: .*|image: ghcr.io/YOUR_REPOSITORY_PATH:${{ github.sha }}|g' deployment.yml
+          sed -i 's|image: .*|image: ghcr.io/p3nc/lab-rock-app:${{ github.sha }}|g' deployment.yml
           sed -i 's|name: registry.gitlab.com|name: ghcr-registry|g' deployment.yml
       - name: Apply K8S configurations
         run: |
