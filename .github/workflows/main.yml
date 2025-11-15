@@ -100,8 +100,10 @@ jobs:
           sed -i 's|name: registry.gitlab.com|name: ghcr-registry|g' deployment.yml
       - name: Apply K8S configurations
         run: |
+          kubectl delete secret db-secrets || true
+          kubectl create secret generic db-secrets \
+            --from-literal=SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.DB_HOST }}:3306/rock_db?useSSL=false" \
+            --from-literal=SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }} \
+            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}
           kubectl apply -f deployment.yml
           kubectl apply -f service.yml
-          kubectl set env deployment/rock-app-deployment SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.DB_HOST }}:3306/rock_db?useSSL=false"
-          kubectl set env deployment/rock-app-deployment SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }}
-          kubectl set env deployment/rock-app-deployment SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}

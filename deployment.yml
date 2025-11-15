@@ -18,5 +18,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: db-secrets
+
       imagePullSecrets:
         - name: ghcr-registry
