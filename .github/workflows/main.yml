@@ -102,8 +102,9 @@ jobs:
         run: |
           kubectl delete secret db-secrets || true
           kubectl create secret generic db-secrets \
-            --from-literal=SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.DB_HOST }}:3306/rock_db?useSSL=false" \
             --from-literal=SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }} \
-            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}
+            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }} \
+            --from-literal=CLOUD_SQL_CONNECTION_NAME=${{ secrets.CLOUD_SQL_CONNECTION_NAME }} # <-- ДОДАЙТЕ ЦЕЙ РЯДОК
+      
           kubectl apply -f deployment.yml
           kubectl apply -f service.yml

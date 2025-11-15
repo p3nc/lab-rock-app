@@ -21,6 +21,19 @@ spec:
           envFrom:
             - secretRef:
                 name: db-secrets
-
+        - name: cloud-sql-proxy
+          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
+          args:
+            - "--auto-iam-authn"
+            - "--structured-logs"
+            - "$(CLOUD_SQL_CONNECTION_NAME)"
+          securityContext:
+            runAsNonRoot: true
+          env:
+            - name: CLOUD_SQL_CONNECTION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: CLOUD_SQL_CONNECTION_NAME
       imagePullSecrets:
         - name: ghcr-registry
