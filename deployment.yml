@@ -1,9 +1,12 @@
-apiVersion: stable.com.extensions/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rock-app-deployment
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: rock-app
   template:
     metadata:
       labels:

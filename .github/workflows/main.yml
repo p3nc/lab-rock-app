@@ -100,7 +100,6 @@ jobs:
           sed -i 's|name: registry.gitlab.com|name: ghcr-registry|g' deployment.yml
       - name: Apply K8S configurations
         run: |
-          kubectl apply -f my-cdr.yml
           kubectl apply -f deployment.yml
           kubectl set env deployment/rock-app-deployment DB_HOST=${{ secrets.DB_HOST }}
           kubectl set env deployment/rock-app-deployment DB_USER=${{ secrets.DB_USER }}
