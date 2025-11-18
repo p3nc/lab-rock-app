@@ -99,16 +99,20 @@ jobs:
       - name: Update deployment.yml with new image tag
         run: |
           sed -i 's|image: ghcr.io/p3nc/lab-rock-app.*|image: ghcr.io/p3nc/lab-rock-app:${{ github.sha }}|g' deployment.yml
-
       - name: Create K8S Secret for Database
         run: |
           kubectl delete secret db-secrets || true
+          
           kubectl create secret generic db-secrets \
+            --from-literal=SPRING_DATASOURCE_URL="jdbc:mysql://mysql-service:3306/rock_db?useSSL=false&allowPublicKeyRetrieval=true" \
             --from-literal=SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }} \
-            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }} \
-            --from-literal=CLOUD_SQL_CONNECTION_NAME=${{ secrets.CLOUD_SQL_CONNECTION_NAME }}
+            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASS }}
 
       - name: Apply K8S configurations
         run: |
+          # Спочатку запускаємо базу даних
+          kubectl apply -f mysql.yml
+          
+          # Потім запускаємо додаток і сервіс
           kubectl apply -f deployment.yml
           kubectl apply -f service.yml
